@@ -1,0 +1,16 @@
+<view class="login-container">
+  <view class="login-header">
+    <view class="login-logo">🐱</view>
+    <view class="login-title">开店喵</view>
+    <view class="login-subtitle">开店前，先评估</view>
+  </view>
+  
+  <button class="login-btn" bindtap="onLogin" loading="{{isLoading}}">
+    <image class="wechat-icon" src="/assets/icons/wechat.png"></image>
+    <text>微信一键登录</text>
+  </button>
+  
+  <view class="login-tips">
+    登录即表示同意<text class="link">《用户协议》</text>和<text class="link">《隐私政策》</text>
+  </view>
+</view>

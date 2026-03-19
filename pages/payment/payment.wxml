@@ -1,0 +1,29 @@
+<view class="payment-container">
+  <view class="payment-header">
+    <view class="payment-title">选择套餐</view>
+  </view>
+  
+  <view class="package-list">
+    <view class="package-item {{selectedPackage === index ? 'active' : ''}}" 
+      wx:for="{{packages}}" wx:key="count" data-index="{{index}}" bindtap="onSelectPackage">
+      <view class="package-main">
+        <view class="package-count">{{item.count}}次评估</view>
+        <view class="package-label">{{item.label}}</view>
+        <view class="package-discount" wx:if="{{item.discount}}">优惠</view>
+      </view>
+      <view class="package-price">
+        <text class="price-symbol">¥</text>
+        <text class="price-value">{{item.price}}</text>
+      </view>
+      <view class="package-check" wx:if="{{selectedPackage === index}}">✓</view>
+    </view>
+  </view>
+  
+  <view class="payment-footer safe-area-bottom">
+    <view class="payment-total">
+      <text class="total-label">应付金额：</text>
+      <text class="total-price">¥{{packages[selectedPackage].price}}</text>
+    </view>
+    <button class="pay-btn" bindtap="onPay">立即支付</button>
+  </view>
+</view>

@@ -1,0 +1,21 @@
+<view class="waiting-container">
+  <view class="animation-area">
+    <view class="pulse-ring"></view>
+    <view class="pulse-ring delay-1"></view>
+    <view class="pulse-ring delay-2"></view>
+    <view class="center-icon">🔍</view>
+  </view>
+  
+  <view class="status-text">{{statusText}}</view>
+  
+  <view class="progress-bar">
+    <view class="progress-fill" style="width: {{progress}}%"></view>
+  </view>
+  
+  <view class="progress-text">{{progress.toFixed(0)}}%</view>
+  
+  <view class="waiting-tips">
+    <view class="tip">AI正在分析多个维度的选址因素</view>
+    <view class="tip">通常需要10-30秒完成分析</view>
+  </view>
+</view>

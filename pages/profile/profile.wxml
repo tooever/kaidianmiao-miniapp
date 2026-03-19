@@ -1,0 +1,40 @@
+<view class="profile-container">
+  <!-- 用户信息 -->
+  <view class="user-section">
+    <block wx:if="{{isLoggedIn && userInfo}}">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/assets/images/default-avatar.png'}}"></image>
+      <view class="user-info">
+        <view class="nickname">{{userInfo.nickName || '开店喵用户'}}</view>
+        <view class="user-id">ID: {{userInfo.id || '---'}}</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="avatar default-avatar">🐱</view>
+      <view class="user-info">
+        <view class="nickname">未登录</view>
+        <view class="login-hint" bindtap="onLogin">点击登录</view>
+      </view>
+    </block>
+  </view>
+  
+  <!-- 菜单列表 -->
+  <view class="menu-section">
+    <view class="menu-item" wx:for="{{menuItems}}" wx:key="title" 
+      data-item="{{item}}" bindtap="onMenuTap">
+      <view class="menu-icon">{{item.icon}}</view>
+      <view class="menu-title">{{item.title}}</view>
+      <view class="menu-arrow">›</view>
+    </view>
+  </view>
+  
+  <!-- 退出登录 -->
+  <view class="logout-section" wx:if="{{isLoggedIn}}">
+    <button class="logout-btn" bindtap="onLogout">退出登录</button>
+  </view>
+  
+  <!-- 底部信息 -->
+  <view class="footer-section">
+    <view class="footer-text">开店喵 v1.0.0</view>
+    <view class="footer-text">© 2024 开店喵团队</view>
+  </view>
+</view>

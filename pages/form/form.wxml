@@ -1,0 +1,59 @@
+<view class="form-container">
+  <view class="form-section">
+    <view class="section-title">基本信息</view>
+    
+    <view class="form-item">
+      <view class="form-label required">店铺名称</view>
+      <input class="form-input" placeholder="请输入您想开的店铺名称" 
+        data-field="shopName" bindinput="onInputChange" value="{{formData.shopName}}" />
+    </view>
+    
+    <view class="form-item">
+      <view class="form-label required">店铺类型</view>
+      <picker mode="selector" range="{{shopTypes}}" value="{{shopTypeIndex}}" bindchange="onShopTypeChange">
+        <view class="form-picker">
+          <text class="{{formData.shopType ? '' : 'placeholder'}}">
+            {{formData.shopType || '请选择店铺类型'}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    
+    <view class="form-item">
+      <view class="form-label required">店铺地址</view>
+      <view class="form-picker" bindtap="onChooseLocation">
+        <text class="{{formData.address ? '' : 'placeholder'}}">
+          {{formData.address || '点击选择店铺地址'}}
+        </text>
+        <text class="picker-arrow">📍</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="form-section">
+    <view class="section-title">补充信息（选填）</view>
+    
+    <view class="form-item">
+      <view class="form-label">店铺面积</view>
+      <input class="form-input" placeholder="请输入店铺面积（平方米）" type="number"
+        data-field="area" bindinput="onInputChange" value="{{formData.area}}" />
+    </view>
+    
+    <view class="form-item">
+      <view class="form-label">月租金</view>
+      <input class="form-input" placeholder="请输入月租金（元）" type="number"
+        data-field="rent" bindinput="onInputChange" value="{{formData.rent}}" />
+    </view>
+    
+    <view class="form-item">
+      <view class="form-label">备注说明</view>
+      <textarea class="form-textarea" placeholder="如有其他信息可在此说明"
+        data-field="remark" bindinput="onInputChange" value="{{formData.remark}}" />
+    </view>
+  </view>
+  
+  <view class="form-footer safe-area-bottom">
+    <button class="submit-btn" bindtap="onSubmit">提交评估</button>
+  </view>
+</view>

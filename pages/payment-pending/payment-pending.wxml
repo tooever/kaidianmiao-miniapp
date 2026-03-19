@@ -1,0 +1,12 @@
+<view class="pending-container">
+  <view class="pending-icon">⏳</view>
+  <view class="pending-title">等待支付</view>
+  <view class="pending-desc">请在 {{formatTime(countdown)}} 内完成支付</view>
+  
+  <view class="pending-tips">
+    <view class="tip-item">支付遇到问题？</view>
+    <view class="tip-item">1. 检查网络连接是否正常</view>
+    <view class="tip-item">2. 确认微信支付账户可用</view>
+    <view class="tip-item">3. 联系客服获取帮助</view>
+  </view>
+</view>

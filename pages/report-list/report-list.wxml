@@ -1,0 +1,39 @@
+<view class="list-container">
+  <view class="report-list" wx:if="{{reports.length > 0}}">
+    <view class="report-card" wx:for="{{reports}}" wx:key="id" 
+      data-id="{{item.id}}" bindtap="onViewReport">
+      <view class="card-header">
+        <view class="shop-name">{{item.shopName}}</view>
+        <view class="score-badge score-{{item.level === '优秀' ? 'excellent' : item.level === '良好' ? 'good' : 'medium'}}">
+          {{item.score}}分
+        </view>
+      </view>
+      <view class="card-body">
+        <view class="info-row">
+          <view class="info-item">
+            <text class="info-label">类型：</text>
+            <text class="info-value">{{item.shopType}}</text>
+          </view>
+        </view>
+        <view class="info-row">
+          <view class="info-item">
+            <text class="info-label">地址：</text>
+            <text class="info-value">{{item.address}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="card-footer">
+        <view class="create-time">{{item.createdAt}}</view>
+        <view class="view-btn">查看详情 ›</view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="empty-state" wx:if="{{!isLoading && reports.length === 0}}">
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">暂无评估报告</view>
+    <button class="empty-btn" bindtap="() => wx.switchTab({url: '/pages/index/index'})">
+      去评估
+    </button>
+  </view>
+</view>
