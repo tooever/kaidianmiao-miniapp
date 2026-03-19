@@ -1,6 +1,7 @@
 /**
  * 报告列表页面
  * 功能：展示用户的历史评估报告列表
+ * API: GET /api/user/reports
  */
 
 const userService = require('../../services/user')
@@ -29,6 +30,7 @@ Page({
 
   /**
    * 加载报告列表
+   * API: GET /api/user/reports
    */
   async loadReports(append = false) {
     if (!append) {
@@ -41,9 +43,9 @@ Page({
         pageSize: this.data.pageSize
       })
 
-      // 使用兼容层处理返回数据
+      // 使用 safeListData() 处理返回数据
       const reports = safeListData(result)
-      const total = result?.total || reports.length
+      const total = result?.total ?? result?.data?.total ?? reports.length
 
       // 格式化报告数据
       const formattedReports = reports.map(item => this.formatReport(item))
@@ -58,7 +60,10 @@ Page({
       console.error('[ReportList] 加载失败:', err)
       
       // 开发环境使用 mock 数据
-      if (process.env.NODE_ENV === 'development' || err.message.includes('网络')) {
+      const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development'
+      const isNetworkError = err.message?.includes('网络') || err.message?.includes('timeout')
+      
+      if (isDev || isNetworkError) {
         this.loadMockData()
         return
       }
@@ -69,8 +74,9 @@ Page({
       })
       
       wx.showToast({
-        title: err.message || '加载失败',
-        icon: 'none'
+        title: err.message || '加载失败，请重试',
+        icon: 'none',
+        duration: 2000
       })
     }
   },
@@ -116,17 +122,31 @@ Page({
 
   /**
    * 格式化报告数据
+   * 兼容后端返回的各种字段名
    */
   formatReport(item) {
+    // 兼容不同的字段名
+    const id = item.id ?? item.taskId ?? item.reportId
+    const areaName = item.areaName ?? item.area ?? item.location ?? '未知区域'
+    const shopType = item.shopType ?? item.category ?? item.type ?? '未分类'
+    const score = item.score ?? item.totalScore ?? 0
+    const riskLevel = item.riskLevel ?? 'medium'
+    const createdAt = item.createdAt ?? item.createTime ?? item.created_at ?? new Date().toISOString()
+    
     // 计算风险等级文字和颜色
-    const riskConfig = this.getRiskConfig(item.riskLevel, item.score)
+    const riskConfig = this.getRiskConfig(riskLevel, score)
     
     return {
       ...item,
+      id,
+      areaName,
+      shopType,
+      score,
+      riskLevel,
       riskText: riskConfig.text,
       riskColor: riskConfig.color,
-      scoreColor: this.getScoreColor(item.score),
-      displayDate: this.formatDate(item.createdAt)
+      scoreColor: this.getScoreColor(score),
+      displayDate: this.formatDate(createdAt)
     }
   },
 

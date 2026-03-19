@@ -52,6 +52,8 @@ Page({
 
   /**
    * 加载报告数据
+   * API: GET /api/analysis-task/{id}/report
+   * 响应字段: score, riskLevel, summary, dimensions[], suggestions[], risks[]
    */
   async loadReport(taskId) {
     this.setData({
@@ -65,6 +67,7 @@ Page({
     } catch (err) {
       console.error('[Report] 加载报告失败:', err)
       
+      // 开发环境使用 mock 数据
       const isDev = !taskId || taskId === 'mock'
       if (isDev) {
         console.log('[Report] 使用Mock数据')
@@ -72,10 +75,14 @@ Page({
         return
       }
       
+      // 判断是否是网络错误
+      const errorMsg = err.message || '加载报告失败，请稍后重试'
+      const isNetworkError = errorMsg.includes('网络') || errorMsg.includes('timeout')
+      
       this.setData({
         isLoading: false,
         hasError: true,
-        errorMessage: err.message || '加载报告失败，请稍后重试'
+        errorMessage: isNetworkError ? '网络连接失败，请检查网络后重试' : errorMsg
       })
     }
   },
@@ -91,24 +98,41 @@ Page({
 
   /**
    * 处理报告数据
+   * 对齐后端响应字段: score, riskLevel, summary, dimensions[], suggestions[], risks[]
    */
   processReport(reportData) {
-    const scoreColor = this.getScoreColor(reportData.score)
-    const riskText = this.getRiskLevelText(reportData.riskLevel)
+    // 安全提取字段，兼容各种返回格式
+    const score = reportData.score ?? reportData.totalScore ?? 0
+    const riskLevel = reportData.riskLevel ?? 'medium'
+    const summary = reportData.summary ?? reportData.conclusion ?? ''
+    
+    const scoreColor = this.getScoreColor(score)
+    const riskText = this.getRiskLevelText(riskLevel)
 
-    const dimensions = (reportData.dimensions || []).map(item => ({
+    // 处理维度数据 dimensions[]
+    const dimensions = (reportData.dimensions || reportData.dimensionList || []).map(item => ({
       ...item,
-      color: this.getScoreColor(item.score)
+      name: item.name ?? item.dimensionName ?? '',
+      score: item.score ?? 0,
+      analysis: item.analysis ?? item.desc ?? '',
+      color: this.getScoreColor(item.score ?? 0)
     }))
 
-    const suggestions = (reportData.suggestions || []).map(item => ({
+    // 处理建议数据 suggestions[]
+    const suggestions = (reportData.suggestions || reportData.suggestionList || []).map(item => ({
       ...item,
-      icon: this.getPriorityIcon(item.priority)
+      content: item.content ?? item.suggestion ?? '',
+      priority: item.priority ?? 1,
+      icon: this.getPriorityIcon(item.priority ?? 1)
     }))
 
-    const risks = (reportData.risks || []).map(item => ({
+    // 处理风险数据 risks[]
+    const risks = (reportData.risks || reportData.riskList || []).map(item => ({
       ...item,
-      levelText: this.getRiskItemText(item.level)
+      content: item.content ?? item.risk ?? '',
+      level: item.level ?? 'medium',
+      mitigation: item.mitigation ?? item.suggestion ?? '',
+      levelText: this.getRiskItemText(item.level ?? 'medium')
     }))
 
     this.setData({
@@ -116,6 +140,9 @@ Page({
       hasError: false,
       report: {
         ...reportData,
+        score,
+        riskLevel,
+        summary,
         dimensions,
         suggestions,
         risks

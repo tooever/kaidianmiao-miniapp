@@ -1,6 +1,8 @@
 /**
  * 支付确认页
  * 展示收款二维码，用户扫码支付后手动确认
+ * API: POST /api/order（创建订单）
+ * API: POST /api/order/{id}/confirm-paid（确认支付）
  */
 const { PRICES } = require('../../utils/constants')
 const orderService = require('../../services/order')
@@ -21,6 +23,7 @@ Page({
   },
 
   onLoad(options) {
+    // 接收从表单页传递的 taskId
     if (options.taskId) {
       this.setData({ taskId: options.taskId })
       this.createOrder()
@@ -29,10 +32,19 @@ Page({
         orderId: options.orderId,
         isLoading: false 
       })
+    } else {
+      // 缺少必要参数
+      wx.showToast({
+        title: '缺少任务信息',
+        icon: 'none'
+      })
+      setTimeout(() => {
+        wx.switchTab({ url: '/pages/index/index' })
+      }, 1500)
     }
   },
 
-  // 创建订单
+  // 创建订单 POST /api/order
   async createOrder() {
     try {
       const result = await orderService.createOrder({
@@ -48,7 +60,12 @@ Page({
       })
     } catch (err) {
       console.error('[Payment] 创建订单失败:', err)
-      // 使用本地生成的订单号
+      wx.showToast({
+        title: err.message || '创建订单失败',
+        icon: 'none',
+        duration: 2000
+      })
+      // 使用本地生成的订单号作为备用
       this.setData({
         orderNo: this.generateOrderNo(),
         isLoading: false
@@ -93,9 +110,18 @@ Page({
     })
   },
 
-  // 确认已支付
+  // 确认已支付 POST /api/order/{id}/confirm-paid
   async onConfirmPaid() {
     if (this.data.isSubmitting) return
+    
+    // 确保有订单ID
+    if (!this.data.orderId) {
+      wx.showToast({
+        title: '订单信息不完整，请重试',
+        icon: 'none'
+      })
+      return
+    }
     
     wx.showModal({
       title: '确认支付',
@@ -108,24 +134,25 @@ Page({
           
           try {
             // 调用确认支付接口
-            await orderService.confirmPaid(this.data.orderId || this.data.orderNo)
+            await orderService.confirmPaid(this.data.orderId)
             
             wx.showToast({
               title: '提交成功',
               icon: 'success'
             })
             
-            // 跳转到支付审核页
+            // 跳转到支付审核页，传递 orderId 和 taskId
             setTimeout(() => {
               wx.redirectTo({
-                url: `/pages/payment-pending/payment-pending?orderId=${this.data.orderId || this.data.orderNo}&taskId=${this.data.taskId}`
+                url: `/pages/payment-pending/payment-pending?orderId=${this.data.orderId}&taskId=${this.data.taskId}`
               })
             }, 1000)
           } catch (err) {
             console.error('[Payment] 确认支付失败:', err)
             wx.showToast({
               title: err.message || '提交失败，请重试',
-              icon: 'none'
+              icon: 'none',
+              duration: 2000
             })
           } finally {
             this.setData({ isSubmitting: false })

@@ -70,8 +70,9 @@ Page({
     try {
       const result = await orderService.getOrderDetail(this.data.orderId)
       
-      // 审核通过，跳转到分析等待页
-      if (result.status === STATUS.ORDER_PAID || result.status === 'approved') {
+      // 对齐后端订单状态：unpaid/pending_verify/paid/refunded
+      // paid 状态表示支付已确认，跳转到分析等待页
+      if (result.status === STATUS.ORDER_PAID || result.status === 'paid') {
         this.stopPolling()
         this.setData({ status: 'approved' })
         
@@ -86,14 +87,14 @@ Page({
           })
         }, 1000)
       } 
-      // 审核拒绝
-      else if (result.status === 'rejected') {
+      // 审核拒绝或退款
+      else if (result.status === 'rejected' || result.status === STATUS.ORDER_REFUNDED) {
         this.stopPolling()
         this.setData({ status: 'rejected' })
         
         wx.showModal({
           title: '审核未通过',
-          content: result.reason || '支付信息核实失败，请联系客服处理',
+          content: result.reason || result.message || '支付信息核实失败，请联系客服处理',
           showCancel: false,
           confirmText: '联系客服',
           success: () => {
@@ -101,6 +102,7 @@ Page({
           }
         })
       }
+      // unpaid 或 pending_verify 状态，继续等待审核
     } catch (err) {
       console.error('[PaymentPending] 查询订单状态失败:', err)
       // 不中断轮询，继续尝试

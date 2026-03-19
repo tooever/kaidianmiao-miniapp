@@ -287,25 +287,32 @@ Page({
     this.setData({ isSubmitting: true })
     
     try {
-      // 构建提交数据
+      // 构建提交数据 - 对齐后端 CreateAnalysisTaskRequest
       const { formData, options } = this.data
+      
+      // 解析 region 为 city 和 district
+      const regionParts = formData.regionText.split(' ')
+      const city = regionParts[0] || ''
+      const district = regionParts.slice(1).join(' ') || ''
+      
       const submitData = {
-        // 基本信息
-        region: formData.regionText,
+        // 基本信息 - 对齐后端字段名
+        city: city,
+        district: district,
         area: formData.area,
-        budget: options.budgetRanges[formData.budgetIndex],
-        category: options.categories[formData.categoryIndex],
+        budget: options.budgetRanges[formData.budgetIndex],  // index 转文本
+        category: options.categories[formData.categoryIndex],  // index 转文本
         
-        // 客群定位
-        customerGroups: formData.customerGroups,
-        priceRange: options.priceRanges[formData.priceIndex],
-        timeSlots: formData.timeSlots,
+        // 客群定位 - 字段名对齐
+        targetCustomers: formData.customerGroups,
+        avgPrice: options.priceRanges[formData.priceIndex],  // index 转文本
+        businessHours: formData.timeSlots,
         
-        // 补充信息
-        hasCompetitor: formData.hasCompetitor,
+        // 补充信息 - 字段名对齐
+        hasCompetitorInfo: formData.hasCompetitor,
         competitors: formData.hasCompetitor ? formData.competitors : '',
         advantages: formData.advantages,
-        remark: formData.remark
+        additionalInfo: formData.remark
       }
       
       // 调用创建任务接口
@@ -316,7 +323,7 @@ Page({
       
       // 跳转到支付页
       wx.redirectTo({
-        url: `/pages/payment/payment?taskId=${result.taskId}`
+        url: `/pages/payment/payment?taskId=${result.taskId || result.id}`
       })
     } catch (err) {
       console.error('[Form] 提交失败:', err)

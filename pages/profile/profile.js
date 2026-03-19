@@ -39,24 +39,34 @@ Page({
 
   /**
    * 加载用户信息
+   * API: GET /api/user/me
+   * 响应字段: id, nickname, avatarUrl, phone
    */
   async loadUserInfo() {
     try {
       const userInfo = await userService.getUserInfo()
       const app = getApp()
       
-      // 更新全局数据和本地存储
-      app.globalData.userInfo = userInfo
-      wx.setStorageSync('userInfo', userInfo)
+      // 兼容后端字段名
+      const formattedUserInfo = {
+        id: userInfo.id ?? userInfo.userId,
+        nickname: userInfo.nickname ?? userInfo.name ?? '',
+        avatarUrl: userInfo.avatarUrl ?? userInfo.avatar ?? '',
+        phone: userInfo.phone ?? userInfo.mobile ?? ''
+      }
       
-      this.setData({ userInfo })
+      // 更新全局数据和本地存储
+      app.globalData.userInfo = formattedUserInfo
+      wx.setStorageSync('userInfo', formattedUserInfo)
+      
+      this.setData({ userInfo: formattedUserInfo })
       
       // 同时获取报告数量
       this.loadReportCount()
     } catch (err) {
       console.error('[Profile] 获取用户信息失败:', err)
-      // 如果是 401 错误，说明 token 失效
-      if (err.message && err.message.includes('登录')) {
+      // 如果是 401 或 token 过期错误，清除登录态
+      if (err.message && (err.message.includes('登录') || err.message.includes('授权'))) {
         this.handleTokenExpired()
       }
     }

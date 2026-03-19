@@ -47,10 +47,10 @@ const COLORS = {
 
 // 状态常量
 const STATUS = {
-  // 评估/分析任务状态
+  // 评估/分析任务状态 - 对齐后端定义
   TASK_PENDING: 'pending',      // 待处理
-  TASK_PROCESSING: 'processing', // 处理中
-  TASK_COMPLETED: 'completed',   // 已完成
+  TASK_ANALYZING: 'analyzing',  // 分析中
+  TASK_COMPLETED: 'completed',  // 已完成
   TASK_FAILED: 'failed',        // 失败
   
   // 订单状态

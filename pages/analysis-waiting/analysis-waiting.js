@@ -155,12 +155,13 @@ Page({
     try {
       const result = await taskService.getTaskStatus(this.data.taskId)
       
-      if (result.status === STATUS.TASK_COMPLETED) {
+      // 对齐后端状态：pending/analyzing/completed/failed
+      if (result.status === STATUS.TASK_COMPLETED || result.status === 'completed') {
         this.onAnalysisComplete()
-      } else if (result.status === STATUS.TASK_FAILED) {
-        this.onAnalysisError(result.error || '分析过程中出现错误')
+      } else if (result.status === STATUS.TASK_FAILED || result.status === 'failed') {
+        this.onAnalysisError(result.error || result.message || '分析过程中出现错误')
       } else {
-        // 继续轮询
+        // pending 或 analyzing 状态，继续轮询
         this.pollTimer = setTimeout(() => {
           this.pollStatus()
         }, POLL_INTERVAL)

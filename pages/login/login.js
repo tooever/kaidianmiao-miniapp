@@ -34,19 +34,24 @@ Page({
       })
       
       if (!loginRes.code) {
-        throw new Error('微信登录失败')
+        throw new Error('微信登录失败：未获取到登录凭证')
       }
       
-      // 调用后端登录接口
+      // 调用后端登录接口 POST /api/auth/wechat-login
       const result = await authService.wechatLogin(loginRes.code)
       
-      // 保存 token
+      // 保存 token 到本地存储
       storage.setToken(result.token)
       
       // 保存用户信息
       if (result.userInfo) {
         storage.setUserInfo(result.userInfo)
       }
+      
+      // 更新全局登录状态
+      const app = getApp()
+      app.globalData.isLoggedIn = true
+      app.globalData.userInfo = result.userInfo || null
       
       wx.showToast({
         title: '登录成功',
@@ -64,7 +69,8 @@ Page({
       console.error('[Login] 登录失败:', err)
       wx.showToast({
         title: err.message || '登录失败，请重试',
-        icon: 'none'
+        icon: 'none',
+        duration: 2000
       })
     } finally {
       this.setData({ isLoading: false })
