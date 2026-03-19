@@ -26,7 +26,7 @@
     </view>
     <view class="stat-divider"></view>
     <view class="stat-item">
-      <view class="stat-value">{{userInfo?.assessmentCount || 0}}</view>
+      <view class="stat-value">{{userInfo.assessmentCount || 0}}</view>
       <view class="stat-label">评估次数</view>
     </view>
   </view>
