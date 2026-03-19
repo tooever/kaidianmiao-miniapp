@@ -1,29 +1,87 @@
-<view class="payment-container">
-  <view class="payment-header">
-    <view class="payment-title">选择套餐</view>
-  </view>
-  
-  <view class="package-list">
-    <view class="package-item {{selectedPackage === index ? 'active' : ''}}" 
-      wx:for="{{packages}}" wx:key="count" data-index="{{index}}" bindtap="onSelectPackage">
-      <view class="package-main">
-        <view class="package-count">{{item.count}}次评估</view>
-        <view class="package-label">{{item.label}}</view>
-        <view class="package-discount" wx:if="{{item.discount}}">优惠</view>
+<!--支付确认页-->
+<view class="payment-container" wx:if="{{!isLoading}}">
+  <!-- 订单信息卡片 -->
+  <view class="order-card">
+    <view class="order-header">
+      <text class="order-title">订单信息</text>
+      <text class="order-no">订单号：{{orderNo}}</text>
+    </view>
+    
+    <view class="order-product">
+      <view class="product-info">
+        <text class="product-name">{{productInfo.name}}</text>
+        <view class="product-desc">专业选址分析，助您开店成功</view>
       </view>
-      <view class="package-price">
+      <view class="product-price">
         <text class="price-symbol">¥</text>
-        <text class="price-value">{{item.price}}</text>
+        <text class="price-value">{{productInfo.price}}</text>
       </view>
-      <view class="package-check" wx:if="{{selectedPackage === index}}">✓</view>
     </view>
   </view>
   
-  <view class="payment-footer safe-area-bottom">
-    <view class="payment-total">
-      <text class="total-label">应付金额：</text>
-      <text class="total-price">¥{{packages[selectedPackage].price}}</text>
+  <!-- 二维码区域 -->
+  <view class="qrcode-card">
+    <view class="qrcode-header">
+      <text class="qrcode-title">扫码支付</text>
     </view>
-    <button class="pay-btn" bindtap="onPay">立即支付</button>
+    
+    <view class="qrcode-content">
+      <image 
+        class="qrcode-image" 
+        src="{{qrCodeUrl}}" 
+        mode="aspectFit"
+        bindtap="onPreviewQrCode"
+        show-menu-by-longpress
+      />
+      <view class="qrcode-hint">请使用微信扫描上方二维码完成支付</view>
+    </view>
+    
+    <view class="qrcode-amount">
+      <text class="amount-label">支付金额</text>
+      <text class="amount-value">¥ {{productInfo.price}}</text>
+    </view>
   </view>
+  
+  <!-- 安全保障说明 -->
+  <view class="security-card">
+    <view class="security-title">
+      <text class="security-icon">🔒</text>
+      <text>安全保障</text>
+    </view>
+    <view class="security-list">
+      <view class="security-item">
+        <text class="security-check">✓</text>
+        <text>官方认证收款账户</text>
+      </view>
+      <view class="security-item">
+        <text class="security-check">✓</text>
+        <text>支付后人工审核确认</text>
+      </view>
+      <view class="security-item">
+        <text class="security-check">✓</text>
+        <text>未完成分析可申请退款</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部操作区 -->
+  <view class="payment-footer safe-area-bottom">
+    <view class="service-entry" bindtap="onContactService">
+      <text class="service-icon">💬</text>
+      <text class="service-text">联系客服</text>
+    </view>
+    
+    <button 
+      class="confirm-btn {{isSubmitting ? 'disabled' : ''}}" 
+      bindtap="onConfirmPaid"
+      disabled="{{isSubmitting}}"
+    >
+      {{isSubmitting ? '提交中...' : '我已支付，提交审核'}}
+    </button>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading-container" wx:if="{{isLoading}}">
+  <view class="loading-text">正在加载订单信息...</view>
 </view>

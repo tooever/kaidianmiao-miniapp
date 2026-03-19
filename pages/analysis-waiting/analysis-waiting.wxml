@@ -1,21 +1,76 @@
+<!--分析等待页-->
 <view class="waiting-container">
-  <view class="animation-area">
-    <view class="pulse-ring"></view>
-    <view class="pulse-ring delay-1"></view>
-    <view class="pulse-ring delay-2"></view>
-    <view class="center-icon">🔍</view>
-  </view>
+  <!-- 正常分析状态 -->
+  <block wx:if="{{isLoading && !isTimeout && !hasError}}">
+    <!-- 加载动画区域 -->
+    <view class="animation-area">
+      <view class="pulse-ring"></view>
+      <view class="pulse-ring delay-1"></view>
+      <view class="pulse-ring delay-2"></view>
+      <text class="center-icon">{{stageIcon}}</text>
+    </view>
+    
+    <!-- 阶段信息 -->
+    <view class="stage-info">
+      <view class="stage-title">{{stageTitle}}</view>
+      <view class="stage-desc">{{stageDesc}}</view>
+      <view class="stage-step">{{stageIcon}} 阶段 {{currentStage + 1}}/4</view>
+    </view>
+    
+    <!-- 进度条区域 -->
+    <view class="progress-area">
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{progress}}%"></view>
+      </view>
+      <view class="progress-info">
+        <text class="progress-percent">{{progress}}%</text>
+        <text class="remaining-time">预计剩余 {{remainingTime}} 秒</text>
+      </view>
+    </view>
+  </block>
   
-  <view class="status-text">{{statusText}}</view>
+  <!-- 完成状态 -->
+  <block wx:if="{{isCompleted}}">
+    <view class="completed-area">
+      <view class="completed-icon">🎉</view>
+      <view class="completed-title">分析完成！</view>
+      <view class="completed-desc">正在跳转到报告页面...</view>
+    </view>
+  </block>
   
-  <view class="progress-bar">
-    <view class="progress-fill" style="width: {{progress}}%"></view>
-  </view>
+  <!-- 超时状态 -->
+  <block wx:if="{{isTimeout}}">
+    <view class="error-area">
+      <view class="error-icon">⏰</view>
+      <view class="error-title">分析时间较长</view>
+      <view class="error-desc">分析可能需要更多时间，您可以稍后在个人中心查看结果</view>
+      
+      <view class="error-actions">
+        <button class="retry-btn" bindtap="onRetry">重新分析</button>
+        <button class="profile-btn" bindtap="onViewInProfile">去个人中心查看</button>
+      </view>
+    </view>
+  </block>
   
-  <view class="progress-text">{{progress.toFixed(0)}}%</view>
+  <!-- 错误状态 -->
+  <block wx:if="{{hasError}}">
+    <view class="error-area">
+      <view class="error-icon">😅</view>
+      <view class="error-title">分析遇到问题</view>
+      <view class="error-desc">{{errorMessage || '请检查网络后重试'}}</view>
+      
+      <view class="error-actions">
+        <button class="retry-btn" bindtap="onRetry">重新分析</button>
+        <button class="service-btn" bindtap="onContactService">联系客服</button>
+      </view>
+    </view>
+  </block>
   
-  <view class="waiting-tips">
-    <view class="tip">AI正在分析多个维度的选址因素</view>
-    <view class="tip">通常需要10-30秒完成分析</view>
+  <!-- 底部提示 -->
+  <view class="bottom-hint" wx:if="{{isLoading && !isTimeout && !hasError}}">
+    <view class="hint-card">
+      <text class="hint-icon">📱</text>
+      <text class="hint-text">分析通常需要 30-60 秒，您可以离开页面</text>
+    </view>
   </view>
 </view>
