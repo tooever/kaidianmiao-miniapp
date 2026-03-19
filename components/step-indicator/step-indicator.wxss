@@ -1,0 +1,98 @@
+/* 步骤指示器样式 */
+.steps {
+  display: flex;
+  padding: 32rpx 16rpx;
+  background: #FFFFFF;
+  position: relative;
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.step__dot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24rpx;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+}
+
+/* 已完成状态 */
+.step--completed .step__dot {
+  background: #FF6B35;
+  color: #FFFFFF;
+}
+
+/* 当前状态 */
+.step--active .step__dot {
+  background: #FF6B35;
+  color: #FFFFFF;
+  box-shadow: 0 0 0 8rpx rgba(255, 107, 53, 0.2);
+}
+
+/* 待处理状态 */
+.step--pending .step__dot {
+  background: #E5E5E5;
+  color: #999999;
+}
+
+/* 连接线 */
+.step__line {
+  position: absolute;
+  top: 24rpx;
+  left: calc(50% + 32rpx);
+  right: calc(-50% + 32rpx);
+  height: 4rpx;
+  background: #E5E5E5;
+  z-index: 1;
+}
+
+.step--completed .step__line {
+  background: #FF6B35;
+}
+
+/* 文字内容 */
+.step__content {
+  text-align: center;
+  margin-top: 16rpx;
+}
+
+.step__title {
+  font-size: 28rpx;
+  line-height: 1.4;
+}
+
+.step__desc {
+  font-size: 22rpx;
+  color: #999999;
+  line-height: 1.4;
+  margin-top: 4rpx;
+}
+
+.step--active .step__title {
+  color: #FF6B35;
+  font-weight: 500;
+}
+
+.step--completed .step__title {
+  color: #1A1A1A;
+}
+
+.step--pending .step__title {
+  color: #999999;
+}
+
+/* 已完成步骤可点击 */
+.step--completed {
+  cursor: pointer;
+}

@@ -31,7 +31,7 @@ function login() {
       success(loginRes) {
         if (loginRes.code) {
           // 请求后端接口获取token
-          request.post(API_PATHS.LOGIN, {
+          request.post(API_PATHS.WECHAT_LOGIN, {
             code: loginRes.code
           }, {
             needToken: false,
@@ -72,7 +72,7 @@ function silentLogin() {
     wx.login({
       success(loginRes) {
         if (loginRes.code) {
-          request.post(API_PATHS.LOGIN, {
+          request.post(API_PATHS.WECHAT_LOGIN, {
             code: loginRes.code
           }, {
             needToken: false,
@@ -106,7 +106,7 @@ function silentLogin() {
 function logout() {
   storage.removeToken()
   storage.removeUserInfo()
-  storage.clearAssessmentCache()
+  storage.clearFormCache()
 }
 
 /**

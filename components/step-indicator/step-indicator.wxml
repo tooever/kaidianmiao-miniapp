@@ -1,0 +1,20 @@
+<view class="steps">
+  <view 
+    class="step {{item.isCompleted ? 'step--completed' : ''}} {{item.isActive ? 'step--active' : ''}} {{item.isPending ? 'step--pending' : ''}}"
+    wx:for="{{stepList}}" 
+    wx:key="stepNum"
+    bindtap="onStepTap"
+    data-step="{{item}}"
+  >
+    <view class="step__dot">
+      <text wx:if="{{item.isCompleted}}">✓</text>
+      <text wx:elif="{{item.isActive}}">{{item.stepNum}}</text>
+      <text wx:else>{{item.stepNum}}</text>
+    </view>
+    <view class="step__line" wx:if="{{index < stepList.length - 1}}"></view>
+    <view class="step__content">
+      <view class="step__title">{{item.title}}</view>
+      <view class="step__desc">{{item.desc}}</view>
+    </view>
+  </view>
+</view>

@@ -14,23 +14,32 @@ function createOrder(data) {
 }
 
 /**
- * 获取订单状态
+ * 获取订单详情
  * @param {string} orderId 订单ID
  */
-function getOrderStatus(orderId) {
-  return get(`${API_PATHS.GET_ORDER_STATUS}/${orderId}`)
+function getOrderDetail(orderId) {
+  return get(`${API_PATHS.ORDER_DETAIL}/${orderId}`)
 }
 
 /**
- * 获取订单列表
+ * 确认支付（核销码核销）
+ * @param {string} orderId 订单ID
+ */
+function confirmPaid(orderId) {
+  return post(`${API_PATHS.CONFIRM_PAID}/${orderId}/confirm-paid`)
+}
+
+/**
+ * 获取用户订单列表
  * @param {Object} params 分页参数
  */
-function getOrderList(params = {}) {
-  return get(API_PATHS.GET_ORDER_LIST, params)
+function getUserOrders(params = {}) {
+  return get(API_PATHS.USER_ORDERS, params)
 }
 
 module.exports = {
   createOrder,
-  getOrderStatus,
-  getOrderList
+  getOrderDetail,
+  confirmPaid,
+  getUserOrders
 }

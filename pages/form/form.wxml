@@ -1,59 +1,212 @@
-<view class="form-container">
-  <view class="form-section">
-    <view class="section-title">基本信息</view>
-    
-    <view class="form-item">
-      <view class="form-label required">店铺名称</view>
-      <input class="form-input" placeholder="请输入您想开的店铺名称" 
-        data-field="shopName" bindinput="onInputChange" value="{{formData.shopName}}" />
-    </view>
-    
-    <view class="form-item">
-      <view class="form-label required">店铺类型</view>
-      <picker mode="selector" range="{{shopTypes}}" value="{{shopTypeIndex}}" bindchange="onShopTypeChange">
-        <view class="form-picker">
-          <text class="{{formData.shopType ? '' : 'placeholder'}}">
-            {{formData.shopType || '请选择店铺类型'}}
-          </text>
-          <text class="picker-arrow">›</text>
-        </view>
-      </picker>
-    </view>
-    
-    <view class="form-item">
-      <view class="form-label required">店铺地址</view>
-      <view class="form-picker" bindtap="onChooseLocation">
-        <text class="{{formData.address ? '' : 'placeholder'}}">
-          {{formData.address || '点击选择店铺地址'}}
-        </text>
-        <text class="picker-arrow">📍</text>
+<view class="form-page">
+  <!-- 步骤指示器 -->
+  <view class="steps-header">
+    <step-indicator 
+      current="{{currentStep}}" 
+      steps="{{steps}}"
+      bind:change="onStepChange"
+    />
+  </view>
+  
+  <!-- Step 1: 基本信息 -->
+  <view class="form-content" wx:if="{{currentStep === 1}}">
+    <view class="form-section">
+      <view class="section-title">基本信息</view>
+      
+      <!-- 城市选择 -->
+      <view class="form-item">
+        <view class="form-label required">选择城市</view>
+        <picker 
+          mode="region" 
+          bindchange="onRegionChange"
+          value="{{formData.region}}"
+        >
+          <view class="form-picker">
+            <text class="{{formData.regionText ? '' : 'placeholder'}}">
+              {{formData.regionText || '请选择城市'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+      
+      <!-- 具体区域/商圈 -->
+      <view class="form-item">
+        <view class="form-label required">具体区域/商圈</view>
+        <input 
+          class="form-input" 
+          placeholder="如：三里屯、中关村" 
+          value="{{formData.area}}"
+          bindinput="onAreaInput"
+        />
+      </view>
+      
+      <!-- 预算范围 -->
+      <view class="form-item">
+        <view class="form-label required">预算范围</view>
+        <picker 
+          mode="selector" 
+          range="{{options.budgetRanges}}"
+          value="{{formData.budgetIndex}}"
+          bindchange="onBudgetChange"
+        >
+          <view class="form-picker">
+            <text class="{{formData.budgetIndex !== null ? '' : 'placeholder'}}">
+              {{formData.budgetIndex !== null ? options.budgetRanges[formData.budgetIndex] : '请选择预算范围'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+      
+      <!-- 经营品类 -->
+      <view class="form-item">
+        <view class="form-label required">经营品类</view>
+        <picker 
+          mode="selector" 
+          range="{{options.categories}}"
+          value="{{formData.categoryIndex}}"
+          bindchange="onCategoryChange"
+        >
+          <view class="form-picker">
+            <text class="{{formData.categoryIndex !== null ? '' : 'placeholder'}}">
+              {{formData.categoryIndex !== null ? options.categories[formData.categoryIndex] : '请选择经营品类'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
       </view>
     </view>
   </view>
   
-  <view class="form-section">
-    <view class="section-title">补充信息（选填）</view>
-    
-    <view class="form-item">
-      <view class="form-label">店铺面积</view>
-      <input class="form-input" placeholder="请输入店铺面积（平方米）" type="number"
-        data-field="area" bindinput="onInputChange" value="{{formData.area}}" />
-    </view>
-    
-    <view class="form-item">
-      <view class="form-label">月租金</view>
-      <input class="form-input" placeholder="请输入月租金（元）" type="number"
-        data-field="rent" bindinput="onInputChange" value="{{formData.rent}}" />
-    </view>
-    
-    <view class="form-item">
-      <view class="form-label">备注说明</view>
-      <textarea class="form-textarea" placeholder="如有其他信息可在此说明"
-        data-field="remark" bindinput="onInputChange" value="{{formData.remark}}" />
+  <!-- Step 2: 客群定位 -->
+  <view class="form-content" wx:if="{{currentStep === 2}}">
+    <view class="form-section">
+      <view class="section-title">客群定位</view>
+      
+      <!-- 目标客群 -->
+      <view class="form-item">
+        <view class="form-label required">目标客群</view>
+        <view class="checkbox-group">
+          <view 
+            class="checkbox-item {{formData.customerGroups.indexOf(item) > -1 ? 'active' : ''}}"
+            wx:for="{{options.customerGroups}}"
+            wx:key="*this"
+            bindtap="onCustomerGroupChange"
+            data-value="{{item}}"
+          >
+            <text>{{item}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 预估客单价 -->
+      <view class="form-item">
+        <view class="form-label required">预估客单价</view>
+        <picker 
+          mode="selector" 
+          range="{{options.priceRanges}}"
+          value="{{formData.priceIndex}}"
+          bindchange="onPriceChange"
+        >
+          <view class="form-picker">
+            <text class="{{formData.priceIndex !== null ? '' : 'placeholder'}}">
+              {{formData.priceIndex !== null ? options.priceRanges[formData.priceIndex] : '请选择预估客单价'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+      
+      <!-- 营业时段 -->
+      <view class="form-item">
+        <view class="form-label required">营业时段</view>
+        <view class="checkbox-group">
+          <view 
+            class="checkbox-item {{formData.timeSlots.indexOf(item) > -1 ? 'active' : ''}}"
+            wx:for="{{options.timeSlots}}"
+            wx:key="*this"
+            bindtap="onTimeSlotChange"
+            data-value="{{item}}"
+          >
+            <text>{{item}}</text>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
   
+  <!-- Step 3: 补充信息 -->
+  <view class="form-content" wx:if="{{currentStep === 3}}">
+    <view class="form-section">
+      <view class="section-title">补充信息</view>
+      
+      <!-- 是否有竞品信息 -->
+      <view class="form-item">
+        <view class="form-label">是否有竞品信息</view>
+        <radio-group class="radio-group" bindchange="onCompetitorChange">
+          <label class="radio-item">
+            <radio value="yes" checked="{{formData.hasCompetitor === true}}" color="#FF6B35" />
+            <text>是</text>
+          </label>
+          <label class="radio-item">
+            <radio value="no" checked="{{formData.hasCompetitor === false}}" color="#FF6B35" />
+            <text>否</text>
+          </label>
+        </radio-group>
+      </view>
+      
+      <!-- 主要竞品 -->
+      <view class="form-item" wx:if="{{formData.hasCompetitor === true}}">
+        <view class="form-label required">主要竞品</view>
+        <input 
+          class="form-input" 
+          placeholder="如：麦当劳、瑞幸咖啡" 
+          value="{{formData.competitors}}"
+          bindinput="onCompetitorsInput"
+        />
+      </view>
+      
+      <!-- 核心优势 -->
+      <view class="form-item">
+        <view class="form-label">核心优势</view>
+        <view class="checkbox-group">
+          <view 
+            class="checkbox-item {{formData.advantages.indexOf(item) > -1 ? 'active' : ''}}"
+            wx:for="{{options.advantages}}"
+            wx:key="*this"
+            bindtap="onAdvantageChange"
+            data-value="{{item}}"
+          >
+            <text>{{item}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 其他补充 -->
+      <view class="form-item">
+        <view class="form-label">其他补充</view>
+        <textarea 
+          class="form-textarea" 
+          placeholder="如有其他信息可在此说明（选填）" 
+          value="{{formData.remark}}"
+          bindinput="onRemarkInput"
+          maxlength="200"
+        />
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部按钮 -->
   <view class="form-footer safe-area-bottom">
-    <button class="submit-btn" bindtap="onSubmit">提交评估</button>
+    <button class="btn-secondary" wx:if="{{currentStep > 1}}" bindtap="onPrevStep">
+      上一步
+    </button>
+    <button class="btn-primary {{currentStep > 1 ? 'half' : ''}}" bindtap="onNextStep" wx:if="{{currentStep < 3}}">
+      下一步
+    </button>
+    <button class="btn-primary {{currentStep > 1 ? 'half' : ''}}" bindtap="onSubmit" loading="{{isSubmitting}}" disabled="{{isSubmitting}}" wx:if="{{currentStep === 3}}">
+      {{isSubmitting ? '提交中...' : '提交评估'}}
+    </button>
   </view>
 </view>

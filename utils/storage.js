@@ -128,6 +128,27 @@ function clearAssessmentCache() {
   return remove(STORAGE_KEYS.ASSESSMENT_CACHE)
 }
 
+/**
+ * 获取表单缓存
+ */
+function getFormCache() {
+  return get(STORAGE_KEYS.FORM_CACHE)
+}
+
+/**
+ * 设置表单缓存
+ */
+function setFormCache(cache) {
+  return set(STORAGE_KEYS.FORM_CACHE, cache)
+}
+
+/**
+ * 清除表单缓存
+ */
+function clearFormCache() {
+  return remove(STORAGE_KEYS.FORM_CACHE)
+}
+
 module.exports = {
   get,
   set,
@@ -141,5 +162,8 @@ module.exports = {
   removeUserInfo,
   getAssessmentCache,
   setAssessmentCache,
-  clearAssessmentCache
+  clearAssessmentCache,
+  getFormCache,
+  setFormCache,
+  clearFormCache
 }

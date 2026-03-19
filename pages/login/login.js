@@ -25,8 +25,28 @@ Page({
     this.setData({ isLoading: true })
     
     try {
-      const result = await authService.login()
-      auth.updateUserInfo(result.userInfo || {})
+      // 获取微信登录 code
+      const loginRes = await new Promise((resolve, reject) => {
+        wx.login({
+          success: resolve,
+          fail: reject
+        })
+      })
+      
+      if (!loginRes.code) {
+        throw new Error('微信登录失败')
+      }
+      
+      // 调用后端登录接口
+      const result = await authService.wechatLogin(loginRes.code)
+      
+      // 保存 token
+      storage.setToken(result.token)
+      
+      // 保存用户信息
+      if (result.userInfo) {
+        storage.setUserInfo(result.userInfo)
+      }
       
       wx.showToast({
         title: '登录成功',
@@ -41,8 +61,9 @@ Page({
         }
       }, 1000)
     } catch (err) {
+      console.error('[Login] 登录失败:', err)
       wx.showToast({
-        title: err.message || '登录失败',
+        title: err.message || '登录失败，请重试',
         icon: 'none'
       })
     } finally {

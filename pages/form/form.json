@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "选址评估"
+  "navigationBarTitleText": "选址评估",
+  "usingComponents": {
+    "step-indicator": "/components/step-indicator/step-indicator"
+  }
 }

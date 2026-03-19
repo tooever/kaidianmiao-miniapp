@@ -1,45 +1,45 @@
 /**
- * 开店喵 - 评估相关API
+ * 开店喵 - 分析任务相关API
  */
 
 const { get, post } = require('../utils/request')
 const { API_PATHS } = require('../utils/constants')
 
 /**
- * 创建评估
- * @param {Object} data 评估数据
+ * 创建分析任务
+ * @param {Object} data 任务数据（表单数据）
  */
-function createAssessment(data) {
-  return post(API_PATHS.CREATE_ASSESSMENT, data)
+function createTask(data) {
+  return post(API_PATHS.CREATE_TASK, data)
 }
 
 /**
- * 获取评估详情
- * @param {string} assessmentId 评估ID
+ * 获取任务状态
+ * @param {string} taskId 任务ID
  */
-function getAssessment(assessmentId) {
-  return get(`${API_PATHS.GET_ASSESSMENT}/${assessmentId}`)
+function getTaskStatus(taskId) {
+  return get(`${API_PATHS.TASK_STATUS}/${taskId}/status`)
 }
 
 /**
- * 获取评估列表
+ * 获取任务报告
+ * @param {string} taskId 任务ID
+ */
+function getTaskReport(taskId) {
+  return get(`${API_PATHS.TASK_REPORT}/${taskId}/report`)
+}
+
+/**
+ * 获取用户报告列表
  * @param {Object} params 分页参数
  */
-function getAssessmentList(params = {}) {
-  return get(API_PATHS.GET_ASSESSMENT_LIST, params)
-}
-
-/**
- * 获取评估报告
- * @param {string} assessmentId 评估ID
- */
-function getAssessmentReport(assessmentId) {
-  return get(`${API_PATHS.GET_ASSESSMENT_REPORT}/${assessmentId}`)
+function getUserReports(params = {}) {
+  return get(API_PATHS.USER_REPORTS, params)
 }
 
 module.exports = {
-  createAssessment,
-  getAssessment,
-  getAssessmentList,
-  getAssessmentReport
+  createTask,
+  getTaskStatus,
+  getTaskReport,
+  getUserReports
 }

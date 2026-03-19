@@ -6,25 +6,27 @@
 // API 基础地址
 const API_BASE_URL = 'http://localhost:8080'
 
-// API 路径常量
+// API 路径常量 - 对齐后端接口
 const API_PATHS = {
-  // 用户相关
-  LOGIN: '/api/auth/login',
-  LOGOUT: '/api/auth/logout',
-  GET_USER_INFO: '/api/user/info',
-  UPDATE_USER_INFO: '/api/user/update',
+  // 认证
+  WECHAT_LOGIN: '/api/auth/wechat-login',
   
-  // 评估相关
-  CREATE_ASSESSMENT: '/api/assessment/create',
-  GET_ASSESSMENT: '/api/assessment/detail',
-  GET_ASSESSMENT_LIST: '/api/assessment/list',
-  GET_ASSESSMENT_REPORT: '/api/assessment/report',
+  // 用户
+  USER_ME: '/api/user/me',
   
-  // 支付相关
-  CREATE_ORDER: '/api/order/create',
-  GET_ORDER_STATUS: '/api/order/status',
-  PAYMENT_CALLBACK: '/api/order/callback',
-  GET_ORDER_LIST: '/api/order/list'
+  // 分析任务（后端使用 analysis-task）
+  CREATE_TASK: '/api/analysis-task',
+  TASK_STATUS: '/api/analysis-task',  // + /{id}/status
+  TASK_REPORT: '/api/analysis-task',  // + /{id}/report
+  
+  // 订单
+  CREATE_ORDER: '/api/order',
+  CONFIRM_PAID: '/api/order',  // + /{id}/confirm-paid
+  ORDER_DETAIL: '/api/order',  // + /{id}
+  
+  // 列表
+  USER_REPORTS: '/api/user/reports',
+  USER_ORDERS: '/api/user/orders'
 }
 
 // 品牌色常量
@@ -45,23 +47,24 @@ const COLORS = {
 
 // 状态常量
 const STATUS = {
-  // 评估状态
-  ASSESSMENT_PENDING: 'pending',      // 待处理
-  ASSESSMENT_PROCESSING: 'processing', // 处理中
-  ASSESSMENT_COMPLETED: 'completed',   // 已完成
-  ASSESSMENT_FAILED: 'failed',        // 失败
+  // 评估/分析任务状态
+  TASK_PENDING: 'pending',      // 待处理
+  TASK_PROCESSING: 'processing', // 处理中
+  TASK_COMPLETED: 'completed',   // 已完成
+  TASK_FAILED: 'failed',        // 失败
   
   // 订单状态
-  ORDER_UNPAID: 'unpaid',     // 未支付
-  ORDER_PAID: 'paid',         // 已支付
-  ORDER_EXPIRED: 'expired',   // 已过期
-  ORDER_REFUNDED: 'refunded'  // 已退款
+  ORDER_UNPAID: 'unpaid',           // 未支付
+  ORDER_PENDING_VERIFY: 'pending_verify', // 待核销
+  ORDER_PAID: 'paid',               // 已支付/已核销
+  ORDER_EXPIRED: 'expired',         // 已过期
+  ORDER_REFUNDED: 'refunded'        // 已退款
 }
 
-// 错误码
+// 错误码 - 对齐后端定义
 const ERROR_CODES = {
   SUCCESS: 0,
-  TOKEN_EXPIRED: 401,
+  TOKEN_EXPIRED: 40002,      // Token 过期错误码
   PERMISSION_DENIED: 403,
   NOT_FOUND: 404,
   SERVER_ERROR: 500,
@@ -83,6 +86,7 @@ const ERROR_MESSAGES = {
 const STORAGE_KEYS = {
   TOKEN: 'token',
   USER_INFO: 'userInfo',
+  FORM_CACHE: 'formCache',           // 表单数据缓存
   ASSESSMENT_CACHE: 'assessmentCache',
   LAST_ASSESSMENT_ID: 'lastAssessmentId'
 }

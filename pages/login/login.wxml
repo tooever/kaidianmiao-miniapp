@@ -5,12 +5,31 @@
     <view class="login-subtitle">开店前，先评估</view>
   </view>
   
-  <button class="login-btn" bindtap="onLogin" loading="{{isLoading}}">
-    <image class="wechat-icon" src="/assets/icons/wechat.png"></image>
-    <text>微信一键登录</text>
-  </button>
+  <view class="login-content">
+    <view class="login-features">
+      <view class="feature-item">
+        <text class="feature-icon">✓</text>
+        <text class="feature-text">智能选址评分</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">✓</text>
+        <text class="feature-text">风险识别预警</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">✓</text>
+        <text class="feature-text">专业开店建议</text>
+      </view>
+    </view>
+  </view>
   
-  <view class="login-tips">
-    登录即表示同意<text class="link">《用户协议》</text>和<text class="link">《隐私政策》</text>
+  <view class="login-footer safe-area-bottom">
+    <button class="login-btn" bindtap="onLogin" loading="{{isLoading}}" disabled="{{isLoading}}">
+      <image class="wechat-icon" src="/assets/icons/wechat.png" mode="aspectFit"></image>
+      <text>{{isLoading ? '登录中...' : '微信一键登录'}}</text>
+    </button>
+    
+    <view class="login-tips">
+      登录即表示同意<text class="link">《用户协议》</text>和<text class="link">《隐私政策》</text>
+    </view>
   </view>
 </view>
