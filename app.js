@@ -2,6 +2,8 @@
  * 开店喵 - 应用入口
  */
 
+const { API_PATHS, ERROR_CODES } = require('./utils/constants')
+
 App({
   onLaunch() {
     // 初始化
@@ -9,6 +11,9 @@ App({
     
     // 检查登录状态
     this.checkLoginStatus()
+    
+    // 检查 Token 有效性
+    this.validateToken()
     
     // 检查更新
     this.checkUpdate()
@@ -32,6 +37,50 @@ App({
     this.globalData.isLoggedIn = !!token
     this.globalData.token = token
     this.globalData.userInfo = userInfo || null
+  },
+
+  /**
+   * 验证 Token 是否有效
+   * 通过调用 /api/user/me 接口来验证
+   */
+  async validateToken() {
+    const token = wx.getStorageSync('token')
+    
+    if (!token) {
+      console.log('[App] 无 Token，跳过验证')
+      return
+    }
+
+    try {
+      const res = await new Promise((resolve, reject) => {
+        wx.request({
+          url: `${this.globalData.apiBaseUrl}${API_PATHS.USER_ME}`,
+          method: 'GET',
+          header: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          success: resolve,
+          fail: reject
+        })
+      })
+
+      const { statusCode, data } = res
+
+      if (statusCode === 200 && data.code === ERROR_CODES.SUCCESS) {
+        // Token 有效，更新用户信息
+        console.log('[App] Token 有效')
+        this.globalData.userInfo = data.data
+        wx.setStorageSync('userInfo', data.data)
+      } else if (data?.code === ERROR_CODES.TOKEN_EXPIRED || statusCode === 401) {
+        // Token 过期或无效，清除登录态
+        console.log('[App] Token 已过期，清除登录态')
+        this.clearLoginStatus()
+      }
+    } catch (err) {
+      console.error('[App] Token 验证失败:', err)
+      // 网络错误等，不清除登录态，让用户继续使用
+    }
   },
 
   /**
@@ -96,6 +145,7 @@ App({
     isLoggedIn: false,
     token: null,
     userInfo: null,
-    systemInfo: null
+    systemInfo: null,
+    apiBaseUrl: 'http://localhost:8080'
   }
 })

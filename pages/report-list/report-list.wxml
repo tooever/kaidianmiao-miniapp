@@ -1,38 +1,54 @@
 <view class="list-container">
+  <!-- 刷新提示 -->
+  <view class="refresh-tip" wx:if="{{isRefreshing}}">
+    <text>正在刷新...</text>
+  </view>
+  
+  <!-- 报告列表 -->
   <view class="report-list" wx:if="{{reports.length > 0}}">
     <view class="report-card" wx:for="{{reports}}" wx:key="id" 
       data-id="{{item.id}}" bindtap="onViewReport">
       <view class="card-header">
-        <view class="shop-name">{{item.shopName}}</view>
-        <view class="score-badge score-{{item.level === '优秀' ? 'excellent' : item.level === '良好' ? 'good' : 'medium'}}">
+        <view class="area-name">{{item.areaName || item.shopName || '未知区域'}}</view>
+        <view class="score-badge" style="background: {{item.scoreColor}};">
           {{item.score}}分
         </view>
       </view>
       <view class="card-body">
         <view class="info-row">
           <view class="info-item">
-            <text class="info-label">类型：</text>
-            <text class="info-value">{{item.shopType}}</text>
+            <text class="info-label">品类：</text>
+            <text class="info-value">{{item.shopType || item.category || '未分类'}}</text>
           </view>
-        </view>
-        <view class="info-row">
-          <view class="info-item">
-            <text class="info-label">地址：</text>
-            <text class="info-value">{{item.address}}</text>
+          <view class="risk-tag" style="color: {{item.riskColor}}; border-color: {{item.riskColor}};">
+            {{item.riskText}}
           </view>
         </view>
       </view>
       <view class="card-footer">
-        <view class="create-time">{{item.createdAt}}</view>
+        <view class="create-time">{{item.displayDate}}</view>
         <view class="view-btn">查看详情 ›</view>
       </view>
     </view>
+    
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{hasMore}}">
+      <text wx:if="{{isLoading}}">加载中...</text>
+      <text wx:else>上拉加载更多</text>
+    </view>
+    
+    <!-- 没有更多 -->
+    <view class="no-more" wx:if="{{!hasMore && reports.length > 3}}">
+      <text>— 没有更多了 —</text>
+    </view>
   </view>
   
+  <!-- 空状态 -->
   <view class="empty-state" wx:if="{{!isLoading && reports.length === 0}}">
     <view class="empty-icon">📋</view>
-    <view class="empty-text">暂无评估报告</view>
-    <button class="empty-btn" bindtap="() => wx.switchTab({url: '/pages/index/index'})">
+    <view class="empty-text">还没有评估报告</view>
+    <view class="empty-hint">去评估一下选址风险吧</view>
+    <button class="empty-btn" bindtap="onGoAssess">
       去评估
     </button>
   </view>

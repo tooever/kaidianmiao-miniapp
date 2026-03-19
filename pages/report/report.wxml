@@ -80,6 +80,9 @@
     <!-- 底部操作栏 -->
     <view class="bottom-bar safe-area-bottom">
       <button class="btn-share" open-type="share">分享报告</button>
+      <button class="btn-save {{isSavingImage ? 'btn-disabled' : ''}}" bindtap="onSaveImage" disabled="{{isSavingImage}}">
+        {{isSavingImage ? '保存中...' : '保存图片'}}
+      </button>
       <button class="btn-reassess" bindtap="onReassess">重新评估</button>
     </view>
   </block>

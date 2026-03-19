@@ -379,9 +379,9 @@
   line-height: 80rpx;
   text-align: center;
   border-radius: 40rpx;
-  font-size: 28rpx;
+  font-size: 26rpx;
   font-weight: 500;
-  margin-right: 16rpx;
+  margin-right: 12rpx;
   background: #FFF3ED;
   color: #FF6B35;
   border: none;
@@ -391,13 +391,35 @@
   border: none;
 }
 
+.btn-save {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  margin-right: 12rpx;
+  background: #E8F5E9;
+  color: #10B981;
+  border: none;
+}
+
+.btn-save::after {
+  border: none;
+}
+
+.btn-disabled {
+  opacity: 0.6;
+}
+
 .btn-reassess {
   flex: 1;
   height: 80rpx;
   line-height: 80rpx;
   text-align: center;
   border-radius: 40rpx;
-  font-size: 28rpx;
+  font-size: 26rpx;
   font-weight: 500;
   background: linear-gradient(135deg, #FF6B35 0%, #FFB347 100%);
   color: #FFFFFF;

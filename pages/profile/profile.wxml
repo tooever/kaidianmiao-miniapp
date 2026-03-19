@@ -2,10 +2,11 @@
   <!-- 用户信息 -->
   <view class="user-section">
     <block wx:if="{{isLoggedIn && userInfo}}">
-      <image class="avatar" src="{{userInfo.avatarUrl || '/assets/images/default-avatar.png'}}"></image>
+      <image class="avatar" src="{{userInfo.avatarUrl || '/assets/images/default-avatar.png'}}" mode="aspectFill"></image>
       <view class="user-info">
-        <view class="nickname">{{userInfo.nickName || '开店喵用户'}}</view>
-        <view class="user-id">ID: {{userInfo.id || '---'}}</view>
+        <view class="nickname">{{userInfo.nickName || userInfo.nickname || '开店喵用户'}}</view>
+        <view class="user-phone" wx:if="{{userInfo.phone}}">{{userInfo.phone}}</view>
+        <view class="user-id" wx:else>ID: {{userInfo.id || '---'}}</view>
       </view>
     </block>
     <block wx:else>
@@ -17,12 +18,26 @@
     </block>
   </view>
   
+  <!-- 统计信息 -->
+  <view class="stats-section" wx:if="{{isLoggedIn}}">
+    <view class="stat-item" bindtap="onMenuTap" data-item="{{menuItems[0]}}">
+      <view class="stat-value">{{reportCount}}</view>
+      <view class="stat-label">评估报告</view>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <view class="stat-value">{{userInfo?.assessmentCount || 0}}</view>
+      <view class="stat-label">评估次数</view>
+    </view>
+  </view>
+  
   <!-- 菜单列表 -->
   <view class="menu-section">
     <view class="menu-item" wx:for="{{menuItems}}" wx:key="title" 
       data-item="{{item}}" bindtap="onMenuTap">
       <view class="menu-icon">{{item.icon}}</view>
       <view class="menu-title">{{item.title}}</view>
+      <view class="menu-count" wx:if="{{item.showCount && reportCount > 0}}">{{reportCount}}</view>
       <view class="menu-arrow">›</view>
     </view>
   </view>
