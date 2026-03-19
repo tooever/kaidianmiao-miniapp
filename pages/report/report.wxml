@@ -1,65 +1,86 @@
-<view class="report-container" wx:if="{{!isLoading && report}}">
-  <!-- 报告头部 -->
-  <view class="report-header">
-    <view class="score-circle">
-      <view class="score-value">{{report.score}}</view>
-      <view class="score-label">综合评分</view>
-    </view>
-    <view class="level-badge level-{{report.level === '优秀' ? 'excellent' : report.level === '良好' ? 'good' : 'medium'}}">
-      {{report.level}}
+<!--开店喵 - 评估报告详情页-->
+<view class="report-page">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">正在加载报告...</text>
     </view>
   </view>
-  
-  <!-- 店铺信息 -->
-  <view class="info-section">
-    <view class="info-item">
-      <view class="info-label">店铺名称</view>
-      <view class="info-value">{{report.shopName}}</view>
-    </view>
-    <view class="info-item">
-      <view class="info-label">店铺类型</view>
-      <view class="info-value">{{report.shopType}}</view>
-    </view>
-    <view class="info-item">
-      <view class="info-label">店铺地址</view>
-      <view class="info-value">{{report.address}}</view>
-    </view>
-  </view>
-  
-  <!-- 维度评分 -->
-  <view class="dimensions-section">
-    <view class="section-title">维度分析</view>
-    <view class="dimension-list">
-      <view class="dimension-item" wx:for="{{report.dimensions}}" wx:key="name">
-        <view class="dimension-header">
-          <view class="dimension-name">{{item.name}}</view>
-          <view class="dimension-score">{{item.score}}分</view>
-        </view>
-        <view class="dimension-bar">
-          <view class="dimension-fill status-{{item.status}}" style="width: {{item.score}}%"></view>
-        </view>
-      </view>
-    </view>
-  </view>
-  
-  <!-- 建议 -->
-  <view class="suggestions-section">
-    <view class="section-title">决策建议</view>
-    <view class="suggestion-list">
-      <view class="suggestion-item" wx:for="{{report.suggestions}}" wx:key="index">
-        <view class="suggestion-bullet">•</view>
-        <view class="suggestion-text">{{item}}</view>
-      </view>
-    </view>
-  </view>
-  
-  <!-- 底部操作 -->
-  <view class="report-footer safe-area-bottom">
-    <button class="action-btn secondary" bindtap="onShare">分享报告</button>
-    <button class="action-btn primary">保存到相册</button>
-  </view>
-</view>
 
-<view class="loading-container" wx:if="{{isLoading}}">
-  <view class="loading-text">加载中...</view>
+  <!-- 错误状态 -->
+  <view class="error-container" wx:if="{{hasError}}">
+    <view class="error-icon">😕</view>
+    <text class="error-text">{{errorMessage}}</text>
+    <button class="retry-btn" bindtap="onRetry">重新加载</button>
+  </view>
+
+  <!-- 报告内容 -->
+  <block wx:if="{{!isLoading && !hasError && report}}">
+    <!-- 评分展示区 -->
+    <view class="score-section" style="background: {{scoreBgColor}}">
+      <view class="score-circle" style="background: {{scoreBgColor}}">
+        <text class="score-number">{{report.score}}</text>
+        <text class="score-label">综合评分</text>
+      </view>
+      <view class="risk-tag risk-tag--{{report.riskLevel}}">
+        {{riskLevelText}}
+      </view>
+      <text class="score-summary">{{report.summary}}</text>
+    </view>
+
+    <!-- 四维度评分卡片 -->
+    <view class="section-title">维度分析</view>
+    <view class="dimensions-grid">
+      <view class="dimension-card" wx:for="{{report.dimensions}}" wx:key="name">
+        <view class="dimension-header">
+          <text class="dimension-name">{{item.name}}</text>
+          <text class="dimension-score" style="color: {{item.color}}">{{item.score}}分</text>
+        </view>
+        <view class="dimension-progress">
+          <view class="dimension-progress-bar" style="width: {{item.score}}%; background: {{item.color}}"></view>
+        </view>
+        <text class="dimension-analysis">{{item.analysis}}</text>
+      </view>
+    </view>
+
+    <!-- 核心建议列表 -->
+    <view class="section-title">核心建议</view>
+    <view class="suggestions-container">
+      <view class="suggestion-card" wx:for="{{report.suggestions}}" wx:key="priority">
+        <text class="suggestion-icon">{{item.icon}}</text>
+        <text class="suggestion-content">{{item.content}}</text>
+      </view>
+    </view>
+
+    <!-- 风险清单（可折叠） -->
+    <view class="risk-section">
+      <view class="risk-header" bindtap="toggleRisks">
+        <view class="risk-header-left">
+          <text class="risk-header-title">⚠️ 风险提示</text>
+          <text class="risk-count">({{report.risks.length}})</text>
+        </view>
+        <text class="risk-arrow {{risksExpanded ? 'risk-arrow--expanded' : ''}}">▼</text>
+      </view>
+      <view class="risk-list" wx:if="{{risksExpanded}}">
+        <view class="risk-item" wx:for="{{report.risks}}" wx:key="content">
+          <view class="risk-bar risk-bar--{{item.level}}"></view>
+          <view class="risk-detail">
+            <text class="risk-level-text risk-level-{{item.level}}">{{item.levelText}}</text>
+            <text class="risk-content">{{item.content}}</text>
+            <text class="risk-mitigation">💡 {{item.mitigation}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部占位（固定操作栏） -->
+    <view class="bottom-placeholder"></view>
+
+    <!-- 底部操作栏 -->
+    <view class="bottom-bar safe-area-bottom">
+      <button class="btn-share" open-type="share">分享报告</button>
+      <button class="btn-reassess" bindtap="onReassess">重新评估</button>
+    </view>
+  </block>
 </view>

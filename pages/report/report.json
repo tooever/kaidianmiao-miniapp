@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "评估报告"
+  "navigationBarTitleText": "选址评估报告",
+  "enableShareAppMessage": true,
+  "enableShareTimeline": true
 }
